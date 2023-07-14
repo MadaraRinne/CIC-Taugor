@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Controle Interno de Caixas - Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 300px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #333333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    img {
+      max-width: 200px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 90%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #dddddd;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 99%;
+      padding: 10px;
+      background-color: #293dad;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .success-message {
+      color: green;
+      margin-top: 10px;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 10px;
+    }
+
+    /* Estilo para o modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="marca-taugor.png" alt="Logo da Empresa">
+    </div>
+    <h1>Login</h1>
+    <form id="loginForm">
+      <label for="username">Usuário:</label>
+      <input type="text" id="username" required>
+      <label for="password">Senha:</label>
+      <input type="password" id="password" required>
+      <button type="submit">Entrar</button>
+    </form>
+    <button id="signupButton">Cadastrar</button>
+    <div id="messageContainer"></div>
+  </div>
+
+  <div id="signupModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Cadastro</h2>
+      <form id="signupForm">
+        <label for="newUsername">Novo usuário:</label>
+        <input type="text" id="newUsername" required>
+        <label for="newPassword">Nova senha:</label>
+        <input type="password" id="newPassword" required>
+        <button type="submit">Cadastrar</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Função para salvar os dados no Local Storage
+    function saveData(username, password) {
+      localStorage.setItem('username', username);
+      localStorage.setItem('password', password);
+    }
+
+    // Função para verificar se os dados do formulário correspondem aos dados salvos no Local Storage
+    function checkLogin(username, password) {
+      const savedUsername = localStorage.getItem('username');
+      const savedPassword = localStorage.getItem('password');
+
+      if (username === savedUsername && password === savedPassword) {
+        return true;
+      }
+
+      return false;
+    }
+
+    // Função para exibir mensagem de sucesso
+    function showSuccessMessage(message) {
+      const messageContainer = document.getElementById('messageContainer');
+      messageContainer.innerHTML = `<p class="success-message">${message}</p>`;
+    }
+
+    // Função para exibir mensagem de erro
+    function showErrorMessage(message) {
+      const messageContainer = document.getElementById('messageContainer');
+      messageContainer.innerHTML = `<p class="error-message">${message}</p>`;
+    }
+
+    // Função para lidar com o envio do formulário de login
+    function handleLoginFormSubmit(event) {
+      event.preventDefault();
+
+      const usernameInput = document.getElementById('username');
+      const passwordInput = document.getElementById('password');
+
+      const username = usernameInput.value;
+      const password = passwordInput.value;
+
+      if (checkLogin(username, password)) {
+        showSuccessMessage('Login realizado com sucesso!');
+        // Redirecionar para a página desejada após o login ser bem-sucedido
+      } else {
+        showErrorMessage('Usuário ou senha incorretos!');
+      }
+
+      // Limpar os campos do formulário de login
+      usernameInput.value = '';
+      passwordInput.value = '';
+    }
+
+    const loginForm = document.getElementById('loginForm');
+    loginForm.addEventListener('submit', handleLoginFormSubmit);
+
+    // Função para lidar com o envio do formulário de cadastro
+    function handleSignupFormSubmit(event) {
+      event.preventDefault();
+
+      const newUsernameInput = document.getElementById('newUsername');
+      const newPasswordInput = document.getElementById('newPassword');
+
+      const newUsername = newUsernameInput.value;
+      const newPassword = newPasswordInput.value;
+
+      saveData(newUsername, newPassword);
+      showSuccessMessage('Cadastro realizado com sucesso!');
+
+      // Limpar os campos do formulário de cadastro
+      newUsernameInput.value = '';
+      newPasswordInput.value = '';
+    }
+
+    const signupForm = document.getElementById('signupForm');
+    signupForm.addEventListener('submit', handleSignupFormSubmit);
+
+    // Função para abrir o modal de cadastro
+    function openSignupModal() {
+      const signupModal = document.getElementById('signupModal');
+      signupModal.style.display = 'block';
+    }
+
+    // Função para fechar o modal de cadastro
+    function closeSignupModal() {
+      const signupModal = document.getElementById('signupModal');
+      signupModal.style.display = 'none';
+    }
+
+    // Adicione um evento de clique ao botão de cadastro
+    const signupButton = document.getElementById('signupButton');
+    signupButton.addEventListener('click', openSignupModal);
+
+    // Adicione um evento de clique ao botão de fechar o modal
+    const closeButtons = document.getElementsByClassName('close');
+    for (let i = 0; i < closeButtons.length; i++) {
+      closeButtons[i].addEventListener('click', closeSignupModal);
+    }
+
+    // Feche o modal ao clicar fora da área do modal
+    window.addEventListener('click', function (event) {
+      const signupModal = document.getElementById('signupModal');
+      if (event.target == signupModal) {
+        signupModal.style.display = 'none';
+      }
+    });
+  </script>
+
+<a href="index.html" class="button">Tela Principal</a>
+</body>
+
+</html>
+
